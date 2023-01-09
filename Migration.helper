@@ -1,0 +1,112 @@
+gravity() {
+
+    if(this.fire.physicalState == this.state.inAir){
+        this.fire.y += this.fire.velocity.y;
+        this.fire.velocity.y += this.g;
+    }
+
+},
+
+collisonDetection() {
+
+    let onAblock = false;
+    
+    this.fire.horizontalBlocksArray.forEach((block, indx) => {
+        
+        if ((this.fire.y + this.fire.sprite.height*this.fire.sprite.scale >= block.y - this.fire.horizontalBlock.height/2 + 5)
+            && (this.fire.y + this.fire.sprite.height*this.fire.sprite.scale < block.y + this.fire.horizontalBlock.height/2 + 5 )
+        && (this.fire.x + this.fire.sprite.width + 40 > block.x 
+                && this.fire.x + this.fire.sprite.width - 40 < block.x + this.fire.horizontalBlock.width)) {
+                this.fire.physicalState = this.state.onGround;
+                this.fire.velocity.y = 0;
+                this.fire.y = block.y - this.fire.horizontalBlock.height/2 - this.fire.sprite.height*this.fire.sprite.scale + 5;
+                onAblock = true;
+            }
+        
+        if (Date.now() - block.sTime > 5000) this.fire.horizontalBlocksArray.splice(indx, 1);
+    }); 
+
+    if (!onAblock && this.fire.y + this.fire.sprite.height*this.fire.sprite.scale >= this.cHeight - 10) {
+        this.fire.physicalState = this.state.onGround;
+        this.fire.velocity.y = 0;
+        this.fire.y = this.cHeight - 10 - this.fire.sprite.height*this.fire.sprite.scale
+    } else if (!onAblock) {
+        this.fire.physicalState = this.state.inAir;
+    }
+
+},
+
+quickAttack() {
+    this.fire.sprite.j = 0;
+    this.fire.attackState = "quickAttack";
+
+},
+
+chargedAttack() {
+    this.fire.sprite.j = 0;
+    this.fire.attackState = "chargedAttack";
+},
+
+fireshoot() {
+    
+    this.fire.bulletsArray.push({
+        x: this.fire.x + ( this.fire.sprite.width*this.fire.sprite.scale)/2,
+        y: this.fire.y + ( this.fire.sprite.height*this.fire.sprite.scale)/1.5
+    })
+},
+
+this.socket.on("handshake", (room_id, callback) => {
+                if (room_id) {
+                    this.room_id = room_id;
+                } else this.room_id = this.id;
+
+                console.log(this.room_id);
+                callback({
+
+                    id: this.id,
+                    player_x: this.fire.x,
+                    player_y: this.fire.y,
+                    moving: this.fire.moving
+                    
+
+                });
+            });
+
+            this.socket.on("initp2", p2 => {
+                this.water = {
+                    ...this.water,
+                    velocity: {
+                        ...this.water.velocity
+                    },
+                    ...p2
+                }
+            })
+
+            this.socket.on("updateP2", p2 => {
+                this.water = {
+                    ...this.water,
+                    velocity: {
+                        ...this.water.velocity
+                    },
+                    ...p2
+                }
+                console.log(this.water);
+            })
+
+
+            manageAnimation(player) {
+                if (player.attackState) {
+                        player.changeAnimationTo(player.attackState); 
+                        if(player.sprite.j >= player.sprite.maxFrames)
+                        player.attackState = null ;
+                    }
+                else if (player.velocity.y > 0) {
+                    player.changeAnimationTo("fall");
+                } else if (player.velocity.y < 0){
+                    player.changeAnimationTo("jump");
+                } else if (player.velocity.x != 0 ) {
+                    player.changeAnimationTo("running");
+                } else if (player.velocity.x == 0) {
+                    player.changeAnimationTo("idle");
+                }
+            },
