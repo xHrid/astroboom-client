@@ -1,3 +1,3 @@
 export default {
-    SERVER_BASEURL : "http://localhost:3000"
+    SERVER_BASEURL : `${process.env.VUE_APP_API_BASE_URL}`
 }

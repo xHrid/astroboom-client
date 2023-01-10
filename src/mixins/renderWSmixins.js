@@ -2,6 +2,8 @@ export default {
     methods: {
         rednerWaitinScreen() {
 
+            this.initDimentions()
+
             const offSet = this.waitingCanvas.getBoundingClientRect();
             const fontSize = this.cWidth > 500 ? 30 : 16;
             this.wctx.font = `${fontSize}px Arial`;

@@ -5,9 +5,10 @@
         <div class="winText">
           {{endText}}
         </div>
-        <button class="play-button">Next Match</button>
+        <a class="play-button" href="lobby">Next Match</a>
       </div>
     </div>
+    <div v-if="mode == 'c'" >Your match code is : {{lobbyCode}}</div>
     <canvas v-show="!start" ref="waiting-canvas"></canvas>
     <div class="instruction-wrapper">
       <canvas v-show="start" ref="game-canvas"> </canvas>
@@ -185,6 +186,9 @@ export default {
       
       this.initDimentions()
       window.addEventListener("resize", ()=> this.initDimentions())
+      screen.orientation.addEventListener("change", ()=> {
+        this.initDimentions()
+      })
 
       this.gameCanvas.addEventListener("mousemove", (event) => {
         this.mousePosition.x = event.clientX - this.rect.left;
@@ -204,6 +208,7 @@ export default {
     },
 
     initDimentions() {
+      
       this.cWidth = window.innerWidth*0.8,
       this.cHeight =  window.innerHeight*0.8,
       this.homeSize = this.cHeight/5
@@ -234,13 +239,8 @@ export default {
         }
       }
 
-              
-        this.backgroundH = this.backgroundSS.height;
-        this.backgroundW = this.backgroundH/this.cHeight*this.cWidth;
-     
-        // this.backgroundW = this.backgroundSS.width;
-        // this.backgroundH = (this.backgroundW/this.cWidth)*this.cHeight;
-      
+      this.backgroundH = this.backgroundSS.height;
+      this.backgroundW = this.backgroundH/this.cHeight*this.cWidth;
 
       this.gameCanvas.width = this.cWidth;
       this.gameCanvas.height = this.cHeight;
@@ -272,6 +272,7 @@ export default {
 
     go() {
       this.yourTurn = false;
+      this.activeMap = null;
       if (this.moveSelected == "build")
         this.socket.emit("go", this.moveSelected, this.activeCells);
       else if (this.moveSelected == "attack") {
@@ -348,7 +349,7 @@ export default {
 
     animate() {
 
-      this.rednerWaitinScreen();
+      if (!this.start) this.rednerWaitinScreen();
 
       if (this.returnFlag) {
         this.instructionText = "Select your new position"
@@ -454,6 +455,7 @@ export default {
         this.exploasionImageSize = this.explosionSS.width/18;
         this.bunkerImgSize = this.bunkerSS.width/8;
         this.init();
+        
     });
     });
   },

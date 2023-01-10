@@ -7,9 +7,9 @@
           <h1>Astroboom</h1>
         </div>
         <div class="button-wrapper">
-          <a href= "lobby" class="play-button">
+          <router-link to= "lobby" class="play-button">
             PLAY GAME
-          </a>
+          </router-link>
         </div>
       </div>
     </div>

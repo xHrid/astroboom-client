@@ -1,11 +1,10 @@
 import socketio from "socket.io-client";
-import config from "@/config";
 import emitNames from "@/js/emitNames";
 
 export default {
   methods: {
     socketinit() {
-      this.socket = socketio(`${config.SERVER_BASEURL}`);
+      this.socket = socketio();
       this.socket.emit(
         emitNames.handshake,
         this.p1Name,
@@ -83,6 +82,7 @@ export default {
             this.gameEnded = gameOver[0]
             if (gameOver[1]) this.endText = "You Won!"
             else this.endText = "Better Luck next Time"
+            this.socket.disconnect();
 
           }
           

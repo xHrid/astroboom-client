@@ -15,7 +15,7 @@
             <div class="text-prompt">"They could have switched their position"</div>
             <div class="last text-prompt ">
                 <div>So which bunker should we attack?</div>
-                <a class="play-button" href="/lobby"> PLAY NOW </a>
+                <router-link class="play-button" href="/lobby"> PLAY NOW </router-link>
             </div>
         </div>
     </div>
@@ -85,44 +85,13 @@ export default {
             this.canvas.height = this.cHeight,
             this.ctx = this.canvas.getContext("2d");
 
-            if (this.cWidth*1.3 < this.cHeight) {
-                this.cellSize = this.cWidth/4;
-                this.fY = this.cHeight - 2.5*this.cellSize;
-                
-            } else {
-                this.cellSize = this.cHeight/5;
-                this.fY = this.cHeight - 2.3*this.cellSize;
-            }
-
-            if (this.cWidth/(this.fY + this.cellSize) > this.skySS.width/this.skySS.height) {
-                this.skyW = this.skySS.width;
-                this.skyH = (this.fY + this.cellSize)/this.cWidth * this.skySS.width;
-            } else {
-                this.skyH = this.skySS.height;
-                this.skyW = this.cWidth/(this.fY + this.cellSize) * this.skySS.height;
-            }
-
-            if (this.cWidth / (this.cHeight -  this.fY + this.cellSize) > this.backgroundSS.width/this.backgroundSS.height) {
-                this.backgroundW = this.backgroundSS.width;
-                this.backgroundH = (this.cHeight -  this.fY + this.cellSize)/this.cWidth * this.backgroundSS.width
-            } else {
-                this.backgroundH = this.backgroundSS.height;
-                this.backgroundW = this.cWidth / (this.cHeight -  this.fY + this.cellSize) * this.backgroundSS.height;
-            }
-
+            this.initDimentions();
             
+            window.addEventListener("resize", ()=> this.initDimentions());
+            screen.orientation.addEventListener("change", ()=> {
+                this.initDimentions();
+            })
 
-            this.fX = this.cWidth/6;
-            
-            this.arrowX = this.fX + this.cellSize/4
-            this.arrowY = this.fY - this.cellSize/2
-
-            this.asteroidX = this.arrowX;
-            this.asteroidY = -this.cellSize/2;
-
-            this.explosionX = this.fX  - this.cellSize/5;
-            this.explosionY = this.fY + this.cellSize - this.cellSize/5;
-            
             window.addEventListener("scroll", ()=> {
 
                 if (window.scrollY > 4*this.cHeight)
@@ -178,6 +147,50 @@ export default {
 
             this.animate();
             
+        },
+
+        initDimentions() {
+
+            console.log("Resizing!");
+
+            this.cWidth = window.innerWidth;
+            this.cHeight = window.innerHeight;
+
+            if (this.cWidth*1.3 < this.cHeight) {
+                this.cellSize = this.cWidth/4;
+                this.fY = this.cHeight - 2.5*this.cellSize;
+                
+            } else {
+                this.cellSize = this.cHeight/5;
+                this.fY = this.cHeight - 2.3*this.cellSize;
+            }
+
+            if (this.cWidth/(this.fY + this.cellSize) > this.skySS.width/this.skySS.height) {
+                this.skyW = this.skySS.width;
+                this.skyH = (this.fY + this.cellSize)/this.cWidth * this.skySS.width;
+            } else {
+                this.skyH = this.skySS.height;
+                this.skyW = this.cWidth/(this.fY + this.cellSize) * this.skySS.height;
+            }
+
+            if (this.cWidth / (this.cHeight -  this.fY + this.cellSize) > this.backgroundSS.width/this.backgroundSS.height) {
+                this.backgroundW = this.backgroundSS.width;
+                this.backgroundH = (this.cHeight -  this.fY + this.cellSize)/this.cWidth * this.backgroundSS.width
+            } else {
+                this.backgroundH = this.backgroundSS.height;
+                this.backgroundW = this.cWidth / (this.cHeight -  this.fY + this.cellSize) * this.backgroundSS.height;
+            }
+
+            this.fX = this.cWidth/6;
+            
+            this.arrowX = this.fX + this.cellSize/4
+            this.arrowY = this.fY - this.cellSize/2
+
+            this.asteroidX = this.arrowX;
+            this.asteroidY = -this.cellSize/2;
+
+            this.explosionX = this.fX  - this.cellSize/5;
+            this.explosionY = this.fY + this.cellSize - this.cellSize/5;
         },
 
         renderBunkers() {
